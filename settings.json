@@ -1,0 +1,62 @@
+{
+    "prev_key": "",
+    "next_key": "",
+    "leader_key": "",
+    "sync_key": "",
+    "sync_right_key": "",
+    "treasure_key": "",
+    "swap_xp_drop_key": "",
+    "toggle_app_key": "",
+    "paste_enter_key": "",
+    "auto_zaap_key": "",
+    "refresh_key": "",
+    "calib_key": "",
+    "sort_taskbar_key": "",
+    "invite_group_key": "",
+    "zaap_delay": "1.0",
+    "game_inv_key": "",
+    "game_char_key": "",
+    "game_spell_key": "",
+    "game_haven_key": "",
+    "radial_menu_active": false,
+    "radial_menu_hotkey": "",
+    "leader_name": "",
+    "accounts_state": {},
+    "accounts_team": {},
+    "current_mode": "ALL",
+    "classes": {
+        "TaskBarHero": "Inconnu"
+    },
+    "custom_order": [
+        "TaskBarHero"
+    ],
+    "macro_positions": {
+        "chat_position": null,
+        "xp_drop_button": null,
+        "zaaps": {}
+    },
+    "advanced_bind_mode": "cycle",
+    "persistent_character_binds": {},
+    "cycle_row_binds": [
+        "ctrl+F1",
+        "ctrl+F2",
+        "ctrl+F3",
+        "ctrl+F4",
+        "ctrl+F5",
+        "ctrl+F6",
+        "ctrl+F7",
+        "ctrl+F8"
+    ],
+    "click_speed": "Moyen",
+    "toolbar_active": false,
+    "spam_click_active": false,
+    "return_to_leader": false,
+    "show_tooltips": true,
+    "toolbar_x": 100,
+    "toolbar_y": 100,
+    "volume_level": 50,
+    "language": "pt",
+    "keyboard_layout": "qwerty_us",
+    "ignore_organizer_warning": false,
+    "tutorial_done": true
+}

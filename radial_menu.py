@@ -6,6 +6,7 @@ from PIL import Image, ImageTk
 
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 import pygame
+from resource_paths import resource_path
 
 
 class RadialMenu:
@@ -52,8 +53,8 @@ class RadialMenu:
             pygame.mixer.init()
             self.mixer_active = True
 
-            hover_path = os.path.abspath("sounds/hover.wav")
-            click_path = os.path.abspath("sounds/click.wav")
+            hover_path = resource_path("sounds/hover.wav")
+            click_path = resource_path("sounds/click.wav")
 
             self.sound_hover = (
                 pygame.mixer.Sound(hover_path) if os.path.exists(hover_path) else None
@@ -69,6 +70,8 @@ class RadialMenu:
             self.mixer_active = False
 
         self.center_image = None
+        if center_icon_path:
+            center_icon_path = resource_path(center_icon_path)
         if center_icon_path and os.path.exists(center_icon_path):
             try:
                 img = Image.open(center_icon_path).resize(
@@ -91,7 +94,7 @@ class RadialMenu:
     def load_image(self, class_name):
         if class_name in self.image_cache:
             return self.image_cache[class_name]
-        path = f"skin/{class_name}.png"
+        path = resource_path(f"skin/{class_name}.png")
         if not os.path.exists(path):
             return None
         try:

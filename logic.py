@@ -135,8 +135,10 @@ def screen_to_norm(x, y):
 
 
 class DofusLogic:
-    def __init__(self, config):
+    def __init__(self, config, keymaps=None):
         self.config = config
+        self.keymaps = keymaps
+        self.i18n = None
         self.all_accounts = []
         self.leader_hwnd = None
         self.error_callback = None
@@ -147,6 +149,10 @@ class DofusLogic:
     def _notify_error(self, msg):
         if self.error_callback:
             self.error_callback(msg)
+
+    def _t(self, key, default, **kwargs):
+        text = self.i18n.t(key, default) if self.i18n else default
+        return text.format(**kwargs) if kwargs else text
 
     def scan_slots(self):
         windows_trouvees = []
@@ -373,7 +379,7 @@ class DofusLogic:
                     return (client_pt[0] / float(w), client_pt[1] / float(h))
             except:
                 pass
-        return (0.0, 0.0)
+        return None
 
     def get_screen_coords_from_saved(self, hwnd, saved_pos):
         if not saved_pos or len(saved_pos) != 2:
@@ -412,6 +418,15 @@ class DofusLogic:
         ctypes.windll.user32.SendInput(1, ctypes.byref(i_down), ctypes.sizeof(INPUT))
         time.sleep(0.01)
         ctypes.windll.user32.SendInput(1, ctypes.byref(i_up), ctypes.sizeof(INPUT))
+
+    def _scan_for_key(self, key_name):
+        if not key_name:
+            return None
+        if self.keymaps:
+            scan_code = self.keymaps.key_to_scan(key_name)
+            if scan_code is not None:
+                return scan_code
+        return AZERTY_TO_SCAN.get(key_name.lower())
 
     def _hardware_click(self, x, y):
         nx, ny = screen_to_norm(x, y)
@@ -515,7 +530,7 @@ class DofusLogic:
             pass
         current_hwnd = win32gui.GetForegroundWindow()
 
-        scan_code = AZERTY_TO_SCAN.get(key_name.lower())
+        scan_code = self._scan_for_key(key_name)
 
         try:
             for acc in active_accs:
@@ -579,7 +594,13 @@ class DofusLogic:
             return
         for acc in active_accs:
             if acc["name"] not in zaaps_pos:
-                self._notify_error(f"Votre Zaap ({acc['name']}) n'est pas calibré.")
+                self._notify_error(
+                    self._t(
+                        "msg_zaap_not_calibrated",
+                        "Zaap for {name} is not calibrated.",
+                        name=acc["name"],
+                    )
+                )
                 return
 
         original_fg_hwnd = win32gui.GetForegroundWindow()
@@ -589,7 +610,7 @@ class DofusLogic:
         except:
             pass
 
-        haven_scan = AZERTY_TO_SCAN.get(haven_key.lower())
+        haven_scan = self._scan_for_key(haven_key)
 
         try:
             for acc in active_accs:
@@ -787,10 +808,14 @@ class DofusLogic:
         chat_pos = self.config.data["macro_positions"].get("chat_position")
 
         if not self.leader_hwnd or not leader:
-            self._notify_error("Décidez d'un chef pour inviter !")
+            self._notify_error(
+                self._t("msg_invite_no_leader", "Set a leader before inviting.")
+            )
             return
         if not chat_pos:
-            self._notify_error("Votre Chat n'est pas calibré.")
+            self._notify_error(
+                self._t("msg_chat_not_calibrated", "Chat is not calibrated.")
+            )
             return
 
         coords = self.get_screen_coords_from_saved(self.leader_hwnd, chat_pos)
@@ -836,7 +861,9 @@ class DofusLogic:
     def execute_treasure_hunt(self):
         chat_pos = self.config.data["macro_positions"].get("chat_position")
         if not chat_pos:
-            self._notify_error("Votre Chat n'est pas calibré.")
+            self._notify_error(
+                self._t("msg_chat_not_calibrated", "Chat is not calibrated.")
+            )
             return
 
         current_hwnd = win32gui.GetForegroundWindow()
@@ -882,7 +909,9 @@ class DofusLogic:
     def execute_swap_xp_drop(self):
         pos = self.config.data["macro_positions"].get("xp_drop_button")
         if not pos:
-            self._notify_error("Votre XP/Drop n'est pas calibré.")
+            self._notify_error(
+                self._t("msg_xp_not_calibrated", "XP/Drop is not calibrated.")
+            )
             return
 
         active_accs = self.get_cycle_list()
